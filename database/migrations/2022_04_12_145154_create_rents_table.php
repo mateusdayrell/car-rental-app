@@ -17,12 +17,11 @@ class CreateRentsTable extends Migration
             $table->id();
             $table->unsignedBigInteger('client_id');
             $table->unsignedBigInteger('car_id');
-            $table->dateTime('bego');
             $table->dateTime('begin_date');
-            $table->dateTime('end_date');
+            $table->dateTime('end_date')->nullable();
             $table->float('daily_value', 8,2);
             $table->integer('km_start');
-            $table->integer('km_end');
+            $table->integer('km_end')->nullable();
             $table->timestamps();
     
             //foreign key (constraints)

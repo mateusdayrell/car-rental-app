@@ -17,7 +17,7 @@ class CreateCarsTable extends Migration
             $table->id();
             $table->unsignedBigInteger('modelo_id');
             $table->string('plate', 10)->unique();
-            $table->boolean('avaliable');
+            $table->boolean('available');
             $table->integer('km');
             $table->timestamps();
 

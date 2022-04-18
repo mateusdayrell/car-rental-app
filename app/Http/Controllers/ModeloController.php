@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Modelo;
+use App\Repositories\ModeloRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -11,12 +12,33 @@ class ModeloController extends Controller
     public function __construct(Modelo $modelo) {
         $this->modelo = $modelo;
     }
+
     
-    public function index()
+    public function index(Request $request)
     {
-        $modelo = $this->modelo->with('brand')->get();
-        return response()->json($modelo, 200);
+        $modelos = array();
+
+        $modeloRepository = new ModeloRepository($this->modelo);
+        
+        if($request->has('brand_atributos')){
+            $brand_atributos = 'brand:id,'.$request->brand_atributos;
+            $modeloRepository->getSelectedAttributes($brand_atributos);
+        } else {
+            $modelos = $this->modelo->with('brand');
+            $modeloRepository->getSelectedAttributes('brands');
+        }
+
+        if($request->has('filter')) {
+            $modeloRepository->filter($request->filter);
+        }
+
+        if ($request->has('atributos')) {
+            $modeloRepository->selectAttributes($request->atributos);
+        }   
+        
+        return response()->json($modeloRepository->getResult(), 200);
     }
+
     
     public function store(Request $request)
     {
@@ -37,6 +59,7 @@ class ModeloController extends Controller
         ]);
         return response()->json($modelo, 200);
     }
+
     
     public function show($id)
     {
@@ -48,6 +71,7 @@ class ModeloController extends Controller
         
         return response()->json($modelo, 200);
     }
+
     
     public function update(Request $request, $id)
     {
@@ -76,26 +100,24 @@ class ModeloController extends Controller
         // ** REMOVING OLD IMAGE FILE
         if ($request->file('image')) {
             Storage::disk('public')->delete($modelo->image);
-        }
-
-        // ** GETTING NEW IMAGE FILE
-        $image = $request->image;
-        $image_urn = $image->store('images/modelos', 'public');
+        }        
 
         // UPDATING
-        $modelo->update([
-            'brand_id' => $request->brand_id,
-            'name' => $request->name,
-            'image' => $image_urn,
-            'door_qt' => $request->door_qt,
-            'seaters' => $request->seaters,
-            'air_bag' => $request->air_bag,
-            'abs' => $request->abs,
-        ]);
+        $modelo->fill($request->all());
+
+            // ** GETTING NEW IMAGE FILE
+            if($request->has('image')){
+                $image = $request->image;
+                $image_urn = $image->store('images/modelos', 'public');
+                $modelo->image = $image_urn;
+            }
+       
+        $modelo->save();
 
         return response()->json($modelo, 200);
     }
     
+
     public function destroy($id)
     {
         $modelo = $this->modelo->find($id);

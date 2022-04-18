@@ -3,84 +3,100 @@
 namespace App\Http\Controllers;
 
 use App\Models\Client;
-use App\Http\Requests\StoreClientRequest;
-use App\Http\Requests\UpdateClientRequest;
+use App\Repositories\ClientRepository;
+use Illuminate\Http\Request;
 
 class ClientController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        //
+   
+    public function __construct(Client $client) {
+        $this->client = $client;
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
+    
+    public function index(Request $request)
     {
-        //
+        $clients = array();
+
+        $clientRepository = new ClientRepository($this->client);
+
+        if($request->has('filter')) {
+            $clientRepository->filter($request->filter);
+        }
+
+        if ($request->has('atributos')) {
+            $clientRepository->selectAttributes($request->atributos);
+        }
+
+        return response()->json($clientRepository->getResult(), 200);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \App\Http\Requests\StoreClientRequest  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(StoreClientRequest $request)
+   
+    public function store(Request $request)
     {
-        //
+        $request->validate($this->client->rules());
+        
+        $client = $this->client->create([
+            'name' => $request->name,
+        ]);
+
+        return response()->json($client, 200);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Client  $client
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Client $client)
+    
+    public function show($id)
     {
-        //
+        $client = $this->client->find($id);
+
+        if ($client === null) {
+            return response()->json(['erro' => 'Cliente pesquisado não existe!'], 404);
+        }
+        
+        return response()->json($client, 200);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Client  $client
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Client $client)
+    
+    public function update(Request $request, $id) 
     {
-        //
+        $client = $this->client->find($id);
+
+        if ($client === null) {
+            return response()->json(['erro' => 'Cliente solicitado para atualização não existe!'], 404);
+        }
+
+        // ** VALIDATION
+        if ($request->method() === 'PATCH'){
+            $dynamicRules = array();
+
+            foreach($client->rules() as $input => $rule) {
+                if (array_key_exists($input, $request->all())) {
+                    $dynamicRules[$input] = $rule;
+                }
+            }
+            
+            $request->validate($dynamicRules);
+
+        } else {
+            $request->validate($client->rules());
+        }
+        
+        // UPDATING
+        $client->fill($request->all());       
+        $client->save();
+
+        return response()->json($client, 200);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \App\Http\Requests\UpdateClientRequest  $request
-     * @param  \App\Models\Client  $client
-     * @return \Illuminate\Http\Response
-     */
-    public function update(UpdateClientRequest $request, Client $client)
+    
+    public function destroy($id)
     {
-        //
-    }
+        $client = $this->client->find($id);
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Client  $client
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Client $client)
-    {
-        //
+        if ($client === null) {
+            return response()->json(['erro' => 'Cliente solicitado para exclusão não existe!'], 404);
+        }
+
+        $client->delete();
+        return ['msg' => 'Cliente removido com sucesso'];
     }
 }

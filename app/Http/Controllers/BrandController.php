@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Brand;
+use App\Repositories\BrandRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -12,12 +13,32 @@ class BrandController extends Controller
     public function __construct(Brand $brand) {
         $this->brand = $brand;
     }
+
     
-    public function index()
+    public function index(Request $request)
     {
-        $brand = $this->brand->all();
-        return response()->json($brand, 200);
+        $brands = array();
+
+        $brandRepository = new BrandRepository($this->brand);
+        
+        if($request->has('modelos_atributos')){
+            $modelos_atributos = 'modelos:id,'.$request->modelos_atributos;
+            $brandRepository->getSelectedAttributes($modelos_atributos);
+        } else {
+            $brandRepository->getSelectedAttributes('modelos');
+        }
+
+        if($request->has('filter')) {
+            $brandRepository->filter($request->filter);
+        }
+
+        if ($request->has('atributos')) {
+            $brandRepository->selectAttributes($request->atributos);
+        }
+
+        return response()->json($brandRepository->getResult(), 200);
     }
+
 
     public function store(Request $request)
     {
@@ -33,6 +54,7 @@ class BrandController extends Controller
         ]);
         return response()->json($brand, 200);
     }
+
     
     public function show($id)
     {
@@ -44,6 +66,7 @@ class BrandController extends Controller
         
         return response()->json($brand, 200);
     }
+
     
     public function update(Request $request, $id) 
     {
@@ -73,20 +96,22 @@ class BrandController extends Controller
         if ($request->file('image')) {
             Storage::disk('public')->delete($brand->image);
         }
-
-        // ** GETTING NEW IMAGE FILE
-        $image = $request->image;
-        $image_urn = $image->store('images', 'public');
-
+        
         // UPDATING
-        dd($request->name);
-        $brand->update([
-            'name' => $request->name,
-            'image' => $image_urn
-        ]);
+        $brand->fill($request->all());
+
+             // ** GETTING NEW IMAGE FILE
+            if( $request->has('image') ) {
+                $image = $request->image;
+                $image_urn = $image->store('images', 'public');
+                $brand->image = $image_urn;
+            }
+       
+        $brand->save();
 
         return response()->json($brand, 200);
     }
+
     
     public function destroy($id)
     {
