@@ -33,7 +33,24 @@
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <!-- Left Side Of Navbar -->
                     <ul class="navbar-nav mr-auto">
-
+                        @auth
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('clients') }}">Clientes</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('rents') }}">Locação</a>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#">Veículos</a>
+                                <div class="dropdown-menu">
+                                    <a class="dropdown-item" href="{{ route('cars') }}">Carros</a>
+                                    {{-- <div class="dropdown-divider"></div> --}}
+                                    <a class="dropdown-item" href="{{ route('brands') }}">Marcas</a>
+                                    {{-- <div class="dropdown-divider"></div> --}}
+                                    <a class="dropdown-item" href="{{ route('modelos') }}">Modelos</a>
+                                </div>
+                            </li>
+                        @endauth
                     </ul>
 
                     <!-- Right Side Of Navbar -->

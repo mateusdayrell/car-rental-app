@@ -20,3 +20,22 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::get('/brands', function() {
+    return view('app.brands');
+})->name('brands')->middleware('auth');
+
+Route::get('/clients', function() {
+    return view('app.clients');
+})->name('clients')->middleware('auth');
+
+Route::get('/cars', function() {
+    return view('app.cars');
+})->name('cars')->middleware('auth');
+
+Route::get('/rents', function() {
+    return view('app.rents');
+})->name('rents')->middleware('auth');
+
+Route::get('/modelos', function() {
+    return view('app.modelos');
+})->name('modelos')->middleware('auth');
