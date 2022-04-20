@@ -26,7 +26,7 @@ class Modelo extends Model
         return [
             'required' => 'O campo :attribute é obrigatório',
             'image.mimes' => 'O arquivo deve ser uma imagem PNG ou SVG',
-            'name.unique' => 'O nome da marca informado da marca já existe',
+            'name.unique' => 'O nome informado já existe',
             'name.min' => 'O campo :attribute deve ter no mínimo 3 caracteres'
         ];
     }
