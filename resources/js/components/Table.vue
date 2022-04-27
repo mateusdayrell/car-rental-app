@@ -4,6 +4,7 @@
             <thead>
                 <tr>
                     <th v-for="t, key in titles" :key="key" scope="col">{{t.title}}</th>
+                    <th v-if="visualize.show || edit.show || destroy.show">Ações</th>
                 </tr>
             </thead>
             <tbody>
@@ -15,6 +16,26 @@
                             <img :src="'/storage/'+item" width="30" height="30">
                         </span>
                     </td>
+                    <td v-if="visualize.show || edit.show || destroy.show">
+                        <button 
+                            v-if="visualize.show" 
+                            class="btn btn-outline-primary btn-sm" 
+                            :data-toggle="visualize.dataToggle" 
+                            :data-target="visualize.dataTarget"
+                            @click="setStore(obj)" > Visualizar </button>
+
+                        <button 
+                            v-if="edit.show" 
+                            class="btn btn-outline-primary btn-sm" 
+                            :data-toggle="edit.dataToggle" 
+                            :data-target="edit.dataTarget" > Editar </button>
+
+                        <button 
+                            v-if="destroy.show" 
+                            class="btn btn-outline-danger btn-sm" 
+                            :data-toggle="destroy.dataToggle" 
+                            :data-target="destroy.dataTarget"> Remover </button>
+                    </td>
                 </tr>
             </tbody>
         </table>
@@ -24,10 +45,14 @@
 
 <script>
     export default {
-        props: ['data', 'titles'],
+        props: ['data', 'titles', 'visualize', 'edit', 'destroy'],
+        methods: {
+            setStore(obj) {
+                this.$store.state.item = obj
+            }
+        },
         computed: {
             dataFilter() {
-                console.log(this.data)
                 let fields = Object.keys(this.titles)
                 let dataArr = []
 

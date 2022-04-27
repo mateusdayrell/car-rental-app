@@ -31,6 +31,9 @@
                     <template v-slot:content>
                         <table-component 
                             :data="brands.data" 
+                            :visualize="{ show: true, dataToggle: 'modal', dataTarget:'#showBrandModal'}"
+                            :edit="{ show: true, dataToggle: 'modal', dataTarget:'#editBrandModal'}"
+                            :destroy="{ show: true, dataToggle: 'modal', dataTarget:'#destroyBrandModal'}"
                             :titles="{
                                 id:{ title: 'ID', type: 'text' }, 
                                 name:{ title: 'Nome', type: 'text' }, 
@@ -54,7 +57,7 @@
                                 </paginate-component>
                             </div>
                             <div class="col">
-                                <button type="submit" class="btn btn-primary btn-sm float-right" data-toggle="modal" data-target="#brandModal">Adicionar</button>
+                                <button type="submit" class="btn btn-primary btn-sm float-right" data-toggle="modal" data-target="#addBrandModal">Adicionar</button>
                             </div>
                         </div>
                     </template>
@@ -63,7 +66,8 @@
             </div>
         </div>
 
-        <modal-component id="brandModal" title="Adicionar marca">
+        <!-- Add brands modal -->
+        <modal-component id="addBrandModal" title="Adicionar marca">
             <template v-slot:alerts>
                 <alert-component type="success" :title="responseTitle" :message="responseMessage" v-if="responseStatus === 'success'"></alert-component>
                 <alert-component type="danger" :title="responseTitle" :message="responseMessage" v-if="responseStatus === 'error'"></alert-component>
@@ -87,6 +91,34 @@
                 <button type="button" class="btn btn-primary" @click="save()">Salvar</button>
             </template>
         </modal-component>
+        <!-- /Add brands modal -->
+
+        <!-- Show brands modal -->
+        <modal-component id="showBrandModal" title="Visualizar marca">
+            <template v-slot:alerts>
+                <alert-component type="success" :title="responseTitle" :message="responseMessage" v-if="responseStatus === 'success'"></alert-component>
+                <alert-component type="danger" :title="responseTitle" :message="responseMessage" v-if="responseStatus === 'error'"></alert-component>
+            </template>
+            <template v-slot:content>
+                <input-container-component title="ID">
+                    <input type="text" class="form-control" :value="$store.state.item.id" disabled>
+                </input-container-component>
+                <input-container-component title="Nome">
+                    <input type="text" class="form-control" :value="$store.state.item.name" disabled>
+                </input-container-component>
+                <input-container-component title="Logo">
+                    <img :src="'storage/'+$store.state.item.image" v-if="$store.state.item.image">
+                </input-container-component>
+                <input-container-component title="Data de criação">
+                    <input type="text" class="form-control" :value="$store.state.item.created_at" disabled>
+                </input-container-component>
+            </template>
+
+            <template v-slot:footer>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+            </template>
+        </modal-component>
+        <!-- /Show brands modal -->
 
     </div>
 </template>
@@ -146,11 +178,18 @@
                         if(filter != '') {
                             filter += ';'
                         }
-                        filter += key + ':like:' + filter
+                        filter += key + ':like:' + this.search[key]
                     }
                 }
 
-                this.filterUrl = '&filtro='+filtro
+                if(filter != '') {
+                    this.pageUrl = 1
+                    this.filterUrl = '&filter=' + filter
+                } else {
+                    this.filterUrl = ''
+                }
+
+                this.loadItens()
             },
             save() {
                 let formData = new FormData()
