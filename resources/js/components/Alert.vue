@@ -2,18 +2,17 @@
     <div :class="style" role="alert">
         {{ title }}
         <hr>
-        <span v-if="message.data.message">{{ message.message}}</span>
-        <span v-if="message.data.id">{{ 'ID do registro: '+message.data.id }}</span>
+        <p>{{ alertMessage.message }}</p>
         <br>
-        <ul v-if="message.content">
-            <li v-for="e, key in message.content" :key="key">{{ e[0] }}</li>
+        <ul v-if="alertMessage.data">
+            <li v-for="e, key in alertMessage.data" :key="key"> {{ e[0] }}</li>
         </ul>
     </div>
 </template>
 
 <script>
     export default {
-        props: ['type', 'title', 'message'],
+        props: ['type', 'title', 'alertMessage'],
         computed: {
             style() {
                 return 'alert alert-'+this.type

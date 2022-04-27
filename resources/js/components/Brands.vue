@@ -69,8 +69,8 @@
         <!-- Add brands modal -->
         <modal-component id="addBrandModal" title="Adicionar marca">
             <template v-slot:alerts>
-                <alert-component type="success" :title="responseTitle" :message="responseMessage" v-if="responseStatus === 'success'"></alert-component>
-                <alert-component type="danger" :title="responseTitle" :message="responseMessage" v-if="responseStatus === 'error'"></alert-component>
+                <alert-component type="success" :title="responseTitle" :alertMessage="responseMessage" v-if="responseStatus === 'success'"></alert-component>
+                <alert-component type="danger" :title="responseTitle" :alertMessage="responseMessage" v-if="responseStatus === 'error'"></alert-component>
             </template>
             <template v-slot:content>
                 <div class="form-group">
@@ -120,6 +120,28 @@
         </modal-component>
         <!-- /Show brands modal -->
 
+        <!-- Destroy brands modal -->
+        <modal-component id="destroyBrandModal" title="Remover marca">
+            <template v-slot:alerts>
+                <alert-component type="success" title="Remoção realizada com sucesso" :alertMessage="$store.state.transaction" v-if="$store.state.transaction.status == 'success'"></alert-component>
+                <alert-component type="danger" title="Erro ao remover registro" :alertMessage="$store.state.transaction" v-if="$store.state.transaction.status == 'error'"></alert-component>
+            </template>
+            <template v-slot:content v-if="$store.state.transaction.status != 'success'">
+                <input-container-component title="ID">
+                    <input type="text" class="form-control" :value="$store.state.item.id" disabled>
+                </input-container-component>
+                <input-container-component title="Nome">
+                    <input type="text" class="form-control" :value="$store.state.item.name" disabled>
+                </input-container-component>
+            </template>
+
+            <template v-slot:footer>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+                <button type="button" class="btn btn-danger" v-if="$store.state.transaction.status != 'success'" @click="destroy()">Remover</button>
+            </template>
+        </modal-component>
+        <!-- /Destroy brands modal -->
+
     </div>
 </template>
 
@@ -154,7 +176,6 @@
         methods: {
             loadItens() {
                 let url = this.baseUrl + '?' + this.pageUrl + this.filterUrl
-                console.log(url)
                 let config = {
                     headers: {
                         'Accept': 'application/json',
@@ -191,6 +212,12 @@
 
                 this.loadItens()
             },
+            paginate(link) {
+                if(link.url) {
+                    this.pageUrl = link.url.split('?')[1]
+                    this.loadItens()
+                }
+            },
             save() {
                 let formData = new FormData()
                 formData.append('name', this.brandName)
@@ -212,6 +239,7 @@
                             message: 'ID do registro: ' + response.data.id
                         }
                         console.log(response)
+                        this.loadItens()
                     })
                     .catch(errors => {
                         this.responseStatus = 'error'
@@ -223,12 +251,35 @@
                         console.log(errors)
                     })
             },
-            paginate(link) {
-                if(link.url) {
-                    this.pageUrl = link.url.split('?')[1]
-                    this.loadItens()
+            destroy() {
+                let conf = confirm('Tem certeza que deseja remover esse registro?')
+                if (!conf) return false
+
+                let url = this.baseUrl + '/' + this.$store.state.item.id
+
+                let formData = new FormData()
+                formData.append('_method', 'delete')
+
+                let config = {
+                    headers: {
+                        'Accept': 'application/json',
+                        'Authorization': this.token
+                    }
                 }
-            }
+
+                
+
+                axios.post(url, formData, config)
+                    .then(response => {
+                        this.$store.state.transaction.status = 'success'
+                        this.$store.state.transaction.message = response.data.msg
+                        this.loadItens()
+                    })
+                    .catch(errors => {
+                        this.$store.state.transaction.status = 'error'
+                        this.$store.state.transaction.message = errors.response.data.erro
+                    })
+            },
         },
         mounted() {
             this.loadItens()

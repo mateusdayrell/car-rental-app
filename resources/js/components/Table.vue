@@ -28,13 +28,15 @@
                             v-if="edit.show" 
                             class="btn btn-outline-primary btn-sm" 
                             :data-toggle="edit.dataToggle" 
-                            :data-target="edit.dataTarget" > Editar </button>
+                            :data-target="edit.dataTarget"
+                            @click="setStore(obj)" > Editar </button>
 
                         <button 
                             v-if="destroy.show" 
                             class="btn btn-outline-danger btn-sm" 
                             :data-toggle="destroy.dataToggle" 
-                            :data-target="destroy.dataTarget"> Remover </button>
+                            :data-target="destroy.dataTarget"
+                            @click="setStore(obj)" > Remover </button>
                     </td>
                 </tr>
             </tbody>
@@ -48,6 +50,8 @@
         props: ['data', 'titles', 'visualize', 'edit', 'destroy'],
         methods: {
             setStore(obj) {
+                this.$store.state.transaction.status = ''
+                this.$store.state.transaction.message = ''
                 this.$store.state.item = obj
             }
         },
