@@ -8,20 +8,20 @@
                         <div class="form-row">
                             <div class="col mb-3">
                                 <input-container-component id="inputId" title="ID" id-help="idHelp" helpText="Opicional. Informe o ID da marca">
-                                    <input type="number" class="form-control" id="inputId" aria-describedby="idHelp" placeholder="ID">
+                                    <input type="number" class="form-control" id="inputId" aria-describedby="idHelp" placeholder="ID" v-model="search.id">
                                 </input-container-component>
                             </div>
                             <div class="col mb-3">
 
                                 <input-container-component id="inputName" title="Nome" id-help="nameHelp" helpText="Opicional. Informe o nome da marca">
-                                    <input type="text" class="form-control" id="inputName" aria-describedby="nameHelp" placeholder="Nome">
+                                    <input type="text" class="form-control" id="inputName" aria-describedby="nameHelp" placeholder="Nome" v-model="search.name">
                                 </input-container-component>
                             </div>
                         </div>
                     </template>
                         
                     <template v-slot:footer>
-                        <button type="submit" class="btn btn-primary btn-sm float-right">Pesquisar</button>
+                        <button type="submit" class="btn btn-primary btn-sm float-right" @click="searchItens()">Pesquisar</button>
                     </template>
                 </card-component>
                 <!-- /Search card -->
@@ -29,10 +29,34 @@
                 <!-- List card -->
                 <card-component title="Relação de marcas">
                     <template v-slot:content>
-                        <table-component></table-component>
+                        <table-component 
+                            :data="brands.data" 
+                            :titles="{
+                                id:{ title: 'ID', type: 'text' }, 
+                                name:{ title: 'Nome', type: 'text' }, 
+                                image:{ title: 'Logo', type: 'image' },
+                                created_at:{ title: 'Data de criação', type: 'date' },
+                            }"
+                        >
+                        </table-component>
                     </template>
                     <template v-slot:footer>
-                        <button type="submit" class="btn btn-primary btn-sm float-right" data-toggle="modal" data-target="#brandModal">Adicionar</button>
+                        <div class="row">
+                            <div class="col-10">
+                                <paginate-component>
+                                    <li 
+                                        :class="link.active ? 'page-item active' : 'page-item'" 
+                                        v-for="link, key in brands.links" :key="key" 
+                                        @click="paginate(link)"
+                                    >
+                                        <a class="page-link" v-html="link.label"></a>
+                                    </li>
+                                </paginate-component>
+                            </div>
+                            <div class="col">
+                                <button type="submit" class="btn btn-primary btn-sm float-right" data-toggle="modal" data-target="#brandModal">Adicionar</button>
+                            </div>
+                        </div>
                     </template>
                 </card-component>
                 <!-- /List card -->
@@ -72,28 +96,61 @@
         data() {
             return {
                 baseUrl: 'http://localhost:8000/api/v1/brand',
+                pageUrl: '',
+                filterUrl: '',
                 brandName: '',
                 brandImage: [],
                 responseStatus: '',
                 responseMessage: {},
-                responseTitle: ''
+                responseTitle: '',
+                brands: { data: [] },
+                search: {id: '', name: ''}
             }
         },
         computed: {
-                token() {
-                    let token = document.cookie.split(';').find(indice => {
-                        return indice.startsWith('token')
-                    })
+            token() {
+                let token = document.cookie.split(';').find(indice => {
+                    return indice.startsWith('token')
+                })
 
-                    token = token.split('=')[1]
-                    token = 'Bearer ' + token
+                token = token.split('=')[1]
+                token = 'Bearer ' + token
 
-                    return token
-                }
-            },
+                return token
+            }
+        },
         methods: {
+            loadItens() {
+                let url = this.baseUrl + '?' + this.pageUrl + this.filterUrl
+                console.log(url)
+                let config = {
+                    headers: {
+                        'Accept': 'application/json',
+                        'Authorization': this.token
+                    }
+                }
+                
+                axios.get(url, config)
+                    .then(response => {
+                        this.brands = response.data
+                    })
+                    .catch(errors => { console.log(errors) })
+            },
             loadImage(e) {
                 this.brandImage = e.target.files
+            },
+            searchItens() {
+                let filter = ''
+                for(let key in this.search) {
+                    if(this.search[key]) {
+                        if(filter != '') {
+                            filter += ';'
+                        }
+                        filter += key + ':like:' + filter
+                    }
+                }
+
+                this.filterUrl = '&filtro='+filtro
             },
             save() {
                 let formData = new FormData()
@@ -113,7 +170,7 @@
                         this.responseStatus = 'success'
                         this.responseTitle = 'Marca cadastrada com sucesso!'
                         this.responseMessage = {
-                            message: 'ID do registro: '+response.data.id
+                            message: 'ID do registro: ' + response.data.id
                         }
                         console.log(response)
                     })
@@ -126,7 +183,16 @@
                         }
                         console.log(errors)
                     })
+            },
+            paginate(link) {
+                if(link.url) {
+                    this.pageUrl = link.url.split('?')[1]
+                    this.loadItens()
+                }
             }
+        },
+        mounted() {
+            this.loadItens()
         }
     }
 </script>
