@@ -91,7 +91,7 @@
                 <!-- /List card -->
             </div>
         </div>
-        
+
 
         <!-- ADD MODAL -->
         <modal-component id="addBrandModal" title="Adicionar marca">
@@ -331,29 +331,11 @@
                 search: {id: '', name: ''}
             }
         },
-        computed: {
-            token() {
-                let token = document.cookie.split(';').find(indice => {
-                    return indice.startsWith('token')
-                })
-
-                token = token.split('=')[1]
-                token = 'Bearer ' + token
-
-                return token
-            }
-        },
         methods: {
             loadItens() {
                 let url = this.baseUrl + '?' + this.pageUrl + this.filterUrl
-                let config = {
-                    headers: {
-                        'Accept': 'application/json',
-                        'Authorization': this.token
-                    }
-                }
                 
-                axios.get(url, config)
+                axios.get(url)
                     .then(response => {
                         this.brands = response.data
                     })
@@ -396,8 +378,6 @@
                 let config = {
                     headers: {
                         'Content-Type': 'multipart/form-data',
-                        'Accept': 'application/json',
-                        'Authorization': this.token
                     }
                 }
 
@@ -436,8 +416,6 @@
                 let config = {
                     headers: {
                         'Content-Type': 'multipart/form-data',
-                        'Accept': 'application/json',
-                        'Authorization': this.token
                     }
                 }
 
@@ -462,15 +440,8 @@
 
                 let formData = new FormData()
                 formData.append('_method', 'delete')
-
-                let config = {
-                    headers: {
-                        'Accept': 'application/json',
-                        'Authorization': this.token
-                    }
-                }
                 
-                axios.post(url, formData, config)
+                axios.post(url, formData)
                     .then(response => {
                         this.$store.state.transaction.status = 'success'
                         this.$store.state.transaction.message = response.data.msg

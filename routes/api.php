@@ -23,12 +23,15 @@ Route::post('login', 'AuthController@login');
 Route::prefix('v1')->middleware(['jwt.auth'])->group(function () {
     //AUTH
     Route::post('me', 'AuthController@me');
-    Route::post('refresh', 'AuthController@refresh');
     Route::post('logout', 'AuthController@logout');
 
+    //API
     Route::apiResource('brand', 'BrandController');
     Route::apiResource('car', 'CarController');
     Route::apiResource('client', 'ClientController');
     Route::apiResource('modelo', 'ModeloController');
     Route::apiResource('rent', 'RentController');
 });
+
+//REFRESH TOKEN
+Route::post('refresh', 'AuthController@refresh');

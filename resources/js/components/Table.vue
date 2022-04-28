@@ -11,7 +11,7 @@
                 <tr v-for="obj, key in dataFilter" :key="key">
                     <td v-for="item, key in obj" :key="key">
                         <span v-if="titles[key].type === 'text'"> {{ item }}</span>
-                        <span v-if="titles[key].type === 'date'">{{ item }}</span>
+                        <span v-if="titles[key].type === 'date'">{{ item | formatDateTimeGlobal }}</span>
                         <span v-if="titles[key].type === 'image'">
                             <img :src="'/storage/'+item" width="30" height="30">
                         </span>
@@ -72,6 +72,6 @@
 
                 return dataArr
             }
-        }
+        },
     }
 </script>
