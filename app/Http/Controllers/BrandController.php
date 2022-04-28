@@ -91,18 +91,16 @@ class BrandController extends Controller
         } else {
             $request->validate($brand->rules(), $brand->feedback());
         }
-
-        // ** REMOVING OLD IMAGE FILE
-        if ($request->file('image')) {
-            Storage::disk('public')->delete($brand->image);
-        }
         
         // UPDATING
         $brand->fill($request->all());
 
              // ** GETTING NEW IMAGE FILE
-            if( $request->has('image') ) {
-                $image = $request->image;
+            if( $request->file('image') ) {
+                // ** REMOVING OLD IMAGE FILE
+                Storage::disk('public')->delete($brand->image);
+
+                $image = $request->file('image');
                 $image_urn = $image->store('images', 'public');
                 $brand->image = $image_urn;
             }

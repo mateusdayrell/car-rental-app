@@ -52,6 +52,7 @@
             setStore(obj) {
                 this.$store.state.transaction.status = ''
                 this.$store.state.transaction.message = ''
+                this.$store.state.transaction.data = ''
                 this.$store.state.item = obj
             }
         },

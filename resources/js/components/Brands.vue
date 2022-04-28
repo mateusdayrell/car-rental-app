@@ -7,24 +7,46 @@
                     <template v-slot:content>
                         <div class="form-row">
                             <div class="col mb-3">
-                                <input-container-component id="inputId" title="ID" id-help="idHelp" helpText="Opicional. Informe o ID da marca">
-                                    <input type="number" class="form-control" id="inputId" aria-describedby="idHelp" placeholder="ID" v-model="search.id">
+                                <input-container-component 
+                                    id="inputId" 
+                                    title="ID" 
+                                    id-help="idHelp"
+                                    helpText="Opicional. Informe o ID da marca">
+                                    <input 
+                                        type="number" 
+                                        class="form-control" 
+                                        id="inputId" 
+                                        aria-describedby="idHelp" 
+                                        placeholder="ID" 
+                                        v-model="search.id">
                                 </input-container-component>
                             </div>
                             <div class="col mb-3">
 
-                                <input-container-component id="inputName" title="Nome" id-help="nameHelp" helpText="Opicional. Informe o nome da marca">
-                                    <input type="text" class="form-control" id="inputName" aria-describedby="nameHelp" placeholder="Nome" v-model="search.name">
+                                <input-container-component 
+                                    id="inputName" 
+                                    title="Nome" 
+                                    id-help="nameHelp" 
+                                    helpText="Opicional. Informe o nome da marca">
+                                    <input 
+                                        type="text" 
+                                        class="form-control" 
+                                        id="inputName" aria-describedby="nameHelp" 
+                                        placeholder="Nome" v-model="search.name">
                                 </input-container-component>
                             </div>
                         </div>
                     </template>
                         
                     <template v-slot:footer>
-                        <button type="submit" class="btn btn-primary btn-sm float-right" @click="searchItens()">Pesquisar</button>
+                        <button 
+                            type="submit" 
+                            class="btn btn-primary btn-sm float-right" 
+                            @click="searchItens()"> Pesquisar </button>
                     </template>
                 </card-component>
                 <!-- /Search card -->
+
 
                 <!-- List card -->
                 <card-component title="Relação de marcas">
@@ -49,15 +71,19 @@
                                 <paginate-component>
                                     <li 
                                         :class="link.active ? 'page-item active' : 'page-item'" 
-                                        v-for="link, key in brands.links" :key="key" 
-                                        @click="paginate(link)"
-                                    >
-                                        <a class="page-link" v-html="link.label"></a>
+                                        v-for="link, key in brands.links" 
+                                        :key="key" 
+                                        @click="paginate(link)">
+                                            <a class="page-link" v-html="link.label"></a>
                                     </li>
                                 </paginate-component>
                             </div>
                             <div class="col">
-                                <button type="submit" class="btn btn-primary btn-sm float-right" data-toggle="modal" data-target="#addBrandModal">Adicionar</button>
+                                <button 
+                                    type="submit" 
+                                    class="btn btn-primary btn-sm float-right" 
+                                    data-toggle="modal" 
+                                    data-target="#addBrandModal"> Adicionar </button>
                             </div>
                         </div>
                     </template>
@@ -65,82 +91,226 @@
                 <!-- /List card -->
             </div>
         </div>
+        
 
-        <!-- Add brands modal -->
+        <!-- ADD MODAL -->
         <modal-component id="addBrandModal" title="Adicionar marca">
             <template v-slot:alerts>
-                <alert-component type="success" :title="responseTitle" :alertMessage="responseMessage" v-if="responseStatus === 'success'"></alert-component>
-                <alert-component type="danger" :title="responseTitle" :alertMessage="responseMessage" v-if="responseStatus === 'error'"></alert-component>
+                <alert-component 
+                    type="success" 
+                    :title="responseTitle" 
+                    :alertMessage="responseMessage" 
+                    v-if="responseStatus === 'success'"/>
+                <alert-component 
+                type="danger" 
+                :title="responseTitle" 
+                :alertMessage="responseMessage" 
+                v-if="responseStatus === 'error'"/>
             </template>
             <template v-slot:content>
                 <div class="form-group">
-                    <input-container-component id="newName" title="Nome" id-help="NewNameHelp" helpText="Informe o nome da marca">
-                        <input type="text" class="form-control" id="newName" aria-describedby="NewNameHelp" placeholder="Nome" v-model="brandName">
+                    <input-container-component 
+                        id="newName" 
+                        title="Nome" 
+                        id-help="NewNameHelp" 
+                        helpText="Informe o nome da marca">
+                        <input 
+                            type="text" 
+                            class="form-control" 
+                            id="newName" 
+                            aria-describedby="NewNameHelp" 
+                            placeholder="Nome" 
+                            v-model="brandName">
                     </input-container-component>
                 </div>
 
                 <div class="form-group">
-                    <input-container-component id="newImage" title="Imagem" id-help="newImageHelp" helpText="Selecione uma imagem PNG">
-                        <input type="file" class="form-control-file" id="newImage" aria-describedby="newImageHelp" placeholder="Imagem" @change="loadImage($event)">
+                    <input-container-component 
+                        id="newImage" 
+                        title="Imagem" 
+                        id-help="newImageHelp"
+                        helpText="Selecione uma imagem PNG">
+                        <input 
+                            type="file" 
+                            class="form-control-file" 
+                            id="newImage" 
+                            aria-describedby="newImageHelp"
+                            placeholder="Imagem" 
+                            @change="loadImage($event)">
                     </input-container-component>
                 </div>
             </template>
 
             <template v-slot:footer>
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
-                <button type="button" class="btn btn-primary" @click="save()">Salvar</button>
+                <button 
+                    type="button" 
+                    class="btn btn-secondary" 
+                    data-dismiss="modal"> Fechar </button>
+                <button 
+                    type="button" 
+                    class="btn btn-primary" 
+                    @click="save()"> Salvar </button>
             </template>
         </modal-component>
-        <!-- /Add brands modal -->
+        <!-- /ADD MODAL -->
 
-        <!-- Show brands modal -->
+
+        <!-- SHOW MODAL -->
         <modal-component id="showBrandModal" title="Visualizar marca">
             <template v-slot:alerts>
-                <alert-component type="success" :title="responseTitle" :message="responseMessage" v-if="responseStatus === 'success'"></alert-component>
-                <alert-component type="danger" :title="responseTitle" :message="responseMessage" v-if="responseStatus === 'error'"></alert-component>
+                <alert-component 
+                    type="success" 
+                    :title="responseTitle" 
+                    :message="responseMessage" 
+                    v-if="responseStatus === 'success'"/>
+                <alert-component 
+                    type="danger" 
+                    :title="responseTitle" 
+                    :message="responseMessage" 
+                    v-if="responseStatus === 'error'"/>
             </template>
             <template v-slot:content>
                 <input-container-component title="ID">
-                    <input type="text" class="form-control" :value="$store.state.item.id" disabled>
+                    <input 
+                        type="text" 
+                        class="form-control" 
+                        :value="$store.state.item.id" disabled>
                 </input-container-component>
                 <input-container-component title="Nome">
-                    <input type="text" class="form-control" :value="$store.state.item.name" disabled>
+                    <input 
+                        type="text" 
+                        class="form-control" 
+                        :value="$store.state.item.name" disabled>
                 </input-container-component>
                 <input-container-component title="Logo">
-                    <img :src="'storage/'+$store.state.item.image" v-if="$store.state.item.image">
+                    <img 
+                        :src="'storage/'+$store.state.item.image" 
+                        v-if="$store.state.item.image">
                 </input-container-component>
                 <input-container-component title="Data de criação">
-                    <input type="text" class="form-control" :value="$store.state.item.created_at" disabled>
+                    <input 
+                        type="text" 
+                        class="form-control" 
+                        :value="$store.state.item.created_at" disabled>
                 </input-container-component>
             </template>
 
             <template v-slot:footer>
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+                <button 
+                    type="button" 
+                    class="btn btn-secondary" 
+                    data-dismiss="modal"> Fechar </button>
             </template>
         </modal-component>
-        <!-- /Show brands modal -->
+        <!-- /SHOW MODAL -->
+        
 
-        <!-- Destroy brands modal -->
+        <!-- DESTROY MODAL-->
         <modal-component id="destroyBrandModal" title="Remover marca">
             <template v-slot:alerts>
-                <alert-component type="success" title="Remoção realizada com sucesso" :alertMessage="$store.state.transaction" v-if="$store.state.transaction.status == 'success'"></alert-component>
-                <alert-component type="danger" title="Erro ao remover registro" :alertMessage="$store.state.transaction" v-if="$store.state.transaction.status == 'error'"></alert-component>
+                <alert-component 
+                    type="success" 
+                    title="Remoção realizada com sucesso" 
+                    :alertMessage="$store.state.transaction" 
+                    v-if="$store.state.transaction.status == 'success'"/>
+                <alert-component 
+                    type="danger" 
+                    title="Erro ao remover registro" 
+                    :alertMessage="$store.state.transaction" 
+                    v-if="$store.state.transaction.status == 'error'"/>
             </template>
-            <template v-slot:content v-if="$store.state.transaction.status != 'success'">
+            <template 
+                v-slot:content 
+                v-if="$store.state.transaction.status != 'success'">
                 <input-container-component title="ID">
-                    <input type="text" class="form-control" :value="$store.state.item.id" disabled>
+                    <input 
+                        type="text" 
+                        class="form-control" 
+                        :value="$store.state.item.id" disabled>
                 </input-container-component>
                 <input-container-component title="Nome">
-                    <input type="text" class="form-control" :value="$store.state.item.name" disabled>
+                    <input 
+                        type="text" 
+                        class="form-control" 
+                        :value="$store.state.item.name" disabled>
                 </input-container-component>
             </template>
 
             <template v-slot:footer>
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
-                <button type="button" class="btn btn-danger" v-if="$store.state.transaction.status != 'success'" @click="destroy()">Remover</button>
+                <button 
+                    type="button" 
+                    class="btn btn-secondary" 
+                    data-dismiss="modal">Fechar</button>
+                <button 
+                    type="button" 
+                    class="btn btn-danger" 
+                    v-if="$store.state.transaction.status != 'success'" 
+                    @click="destroy()">Remover</button>
             </template>
         </modal-component>
-        <!-- /Destroy brands modal -->
+        <!-- /DESTROY MODAL -->
+
+
+        <!-- EDIT MODAL -->
+        <modal-component id="editBrandModal" title="Editar marca">
+            <template v-slot:alerts>
+                <alert-component 
+                    type="success" 
+                    title="Atualização realizada com sucesso" 
+                    :alertMessage="$store.state.transaction" 
+                    v-if="$store.state.transaction.status == 'success'"/>
+                <alert-component 
+                    type="danger" 
+                    title="Erro ao atualizar registro" 
+                    :alertMessage="$store.state.transaction" 
+                    v-if="$store.state.transaction.status == 'error'"/>
+            </template>
+            <template v-slot:content >
+                <div class="form-group">
+                    <input-container-component 
+                        id="updateName" 
+                        title="Nome" 
+                        id-help="updateNameHelp" 
+                        helpText="Informe o nome da marca">
+                            <input 
+                                type="text" 
+                                class="form-control" 
+                                id="updateName" 
+                                aria-describedby="updateNameHelp" 
+                                placeholder="Nome" 
+                                v-model="$store.state.item.name">
+                    </input-container-component>
+                </div>
+                <div class="form-group">
+                    <input-container-component 
+                        id="updateImage" 
+                        title="Imagem" 
+                        d-help="updateImageHelp" 
+                        helpText="Selecione uma imagem PNG">
+                            <input 
+                                type="file" 
+                                class="form-control-file" 
+                                id="updateImage" 
+                                aria-describedby="updateImageHelp" 
+                                placeholder="Imagem" 
+                                @change="loadImage($event)">
+                    </input-container-component>
+                </div>
+                {{ $store.state.item }}
+            </template>
+
+            <template v-slot:footer>
+                <button 
+                    type="button" 
+                    class="btn btn-secondary" 
+                    data-dismiss="modal"> Fechar </button>
+                <button 
+                    type="button" 
+                    class="btn btn-danger"
+                    @click="update()"> Atualizar </button>
+            </template>
+        </modal-component>
+        <!-- /EDIT MODAL -->
 
     </div>
 </template>
@@ -251,11 +421,44 @@
                         console.log(errors)
                     })
             },
+            update() {
+                let url = this.baseUrl + '/' + this.$store.state.item.id
+
+                let formData = new FormData()
+                formData.append('_method', 'patch')
+                formData.append('name', this.$store.state.item.name)
+
+                // Verify image input
+                if(this.brandImage[0]) {
+                    formData.append('image', this.brandImage[0])
+                }
+
+                let config = {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                        'Accept': 'application/json',
+                        'Authorization': this.token
+                    }
+                }
+
+                axios.post(url, formData, config)
+                    .then(response => {
+                        updateImage.value = ''
+                        this.$store.state.transaction.status = 'success'
+                        this.$store.state.transaction.message = 'Registro atualizado com sucesso!'
+                        this.loadItens()
+                    })
+                    .catch(errors => {
+                        this.$store.state.transaction.status = 'error'
+                        this.$store.state.transaction.message = errors.response.data.message
+                        this.$store.state.transaction.data = errors.response.data.errors
+                    })
+            },
             destroy() {
                 let conf = confirm('Tem certeza que deseja remover esse registro?')
                 if (!conf) return false
 
-                let url = this.baseUrl + '/' + this.$store.state.item.id
+                let url = `${this.baseUrl}/${this.$store.state.item.id}`
 
                 let formData = new FormData()
                 formData.append('_method', 'delete')
@@ -266,9 +469,7 @@
                         'Authorization': this.token
                     }
                 }
-
                 
-
                 axios.post(url, formData, config)
                     .then(response => {
                         this.$store.state.transaction.status = 'success'

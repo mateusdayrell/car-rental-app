@@ -15,7 +15,7 @@ Vue.use(Vuex)
 const store = new Vuex.Store({
     state: {
         item: {},
-        transaction: { status: '', message: '' },
+        transaction: { status: '', message: '', data: '' },
     }
 })
 
