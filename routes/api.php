@@ -27,6 +27,7 @@ Route::prefix('v1')->middleware(['jwt.auth'])->group(function () {
 
     //API
     Route::apiResource('brand', 'BrandController');
+    Route::get('brand-all', 'BrandController@getAll');
     Route::apiResource('car', 'CarController');
     Route::apiResource('client', 'ClientController');
     Route::apiResource('modelo', 'ModeloController');

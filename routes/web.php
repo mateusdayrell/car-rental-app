@@ -25,15 +25,18 @@ Route::get('/brands', function() {
 })->name('brands')->middleware('auth');
 
 Route::get('/clients', function() {
-    return view('app.clients');
+    echo 'Clientes';
+    // return view('app.clients');
 })->name('clients')->middleware('auth');
 
 Route::get('/cars', function() {
-    return view('app.cars');
+    echo 'Carros';
+    // return view('app.cars');
 })->name('cars')->middleware('auth');
 
 Route::get('/rents', function() {
-    return view('app.rents');
+    echo 'Locações';
+    // return view('app.rents');
 })->name('rents')->middleware('auth');
 
 Route::get('/modelos', function() {
