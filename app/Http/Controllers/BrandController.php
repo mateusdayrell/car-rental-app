@@ -39,20 +39,44 @@ class BrandController extends Controller
         return response()->json($brandRepository->getPaginatedResult(2), 200);
     }
 
+    public function getAll(Request $request) {
+        $brands = array();
+
+        $brandRepository = new BrandRepository($this->brand);
+        
+        if($request->has('modelos_atributos')){
+            $modelos_atributos = 'modelos:id,'.$request->modelos_atributos;
+            $brandRepository->getSelectedAttributes($modelos_atributos);
+        } else {
+            $brandRepository->getSelectedAttributes('modelos');
+        }
+
+        if($request->has('filter')) {
+            $brandRepository->filter($request->filter);
+        }
+
+        if ($request->has('atributos')) {
+            $brandRepository->selectAttributes($request->atributos);
+        }
+
+        return response()->json($brandRepository->getResult(), 200);
+    }
+
+
 
     public function store(Request $request)
     {
         $request->validate($this->brand->rules(), $this->brand->feedback());
 
-        // ** GETTING IMAGE FILE
-        $image = $request->image;
+        $image = $request->file('image');
         $image_urn = $image->store('images', 'public');
-        
+
         $brand = $this->brand->create([
             'name' => $request->name,
             'image' => $image_urn
         ]);
-        return response()->json($brand, 200);
+
+        return response()->json($brand, 201);
     }
 
     

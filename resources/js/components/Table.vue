@@ -60,7 +60,7 @@
             dataFilter() {
                 let fields = Object.keys(this.titles)
                 let dataArr = []
-
+                
                 this.data.map((item, key) => {
                     let filteredItens = {}
                     

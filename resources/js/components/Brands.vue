@@ -145,7 +145,8 @@
                 <button 
                     type="button" 
                     class="btn btn-secondary" 
-                    data-dismiss="modal"> Fechar </button>
+                    data-dismiss="modal"
+                    @click="clearValues()"> Fechar </button>
                 <button 
                     type="button" 
                     class="btn btn-primary" 
@@ -377,7 +378,7 @@
 
                 let config = {
                     headers: {
-                        'Content-Type': 'multipart/form-data',
+                        'Content-Type': 'multipart/form-data'
                     }
                 }
 
@@ -388,8 +389,8 @@
                         this.responseMessage = {
                             message: 'ID do registro: ' + response.data.id
                         }
-                        console.log(response)
-                        this.loadItens()
+                        console.log('Mensagem',this.responseMessage)
+                        // this.loadItens()
                     })
                     .catch(errors => {
                         this.responseStatus = 'error'
@@ -452,6 +453,11 @@
                         this.$store.state.transaction.message = errors.response.data.erro
                     })
             },
+            clearValues() {
+                this.brandName = '';
+                this.brandImage = [];
+                newImage.value = '';
+            }
         },
         mounted() {
             this.loadItens()
