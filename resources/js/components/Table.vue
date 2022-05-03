@@ -65,7 +65,11 @@
                     let filteredItens = {}
                     
                     fields.forEach(field => {
-                        filteredItens[field] = item[field] //adding dynamic attributes to an object
+                        if(field == 'brand'){
+                            filteredItens[field] = item[field].name
+                        } else {
+                            filteredItens[field] = item[field] //adding dynamic attributes to an object
+                        }
                     })
                     dataArr.push(filteredItens)
                 })

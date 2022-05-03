@@ -24,7 +24,7 @@ abstract class AbstractRepository {
     }
 
     public function selectAttributes($attributes) {
-        $this->model = $this->model->selectRaw($attributes);
+        $this->model = $this->model->with($attributes);
     }
 
     public function getResult() {

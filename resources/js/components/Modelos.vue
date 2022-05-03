@@ -43,13 +43,13 @@
                                         class="form-control" 
                                         id="inputBrand"
                                         aria-describedby="brandHelp"
-                                        v-model="search.branId">
+                                        v-model="search.brand_id">
                                             <option value="" disabled selected>Selecione uma marca</option>
-                                            <option v-for="b, key in brands" :key="key" :value="b.id"> {{ b.name }}</option>
+                                            <option v-for="b, key in brands" :key="key" :value="b.id" > {{b.id}} - {{ b.name }}</option>
                                     </select>
                                 </div>
                             </div>
-                            <div class="col mt-4">
+                            <!-- <div class="col mt-4">
                                 <div class="form-check">
                                     <input 
                                         class="form-check-input" 
@@ -65,12 +65,12 @@
                                         class="form-check-input" 
                                         type="checkbox" value="" 
                                         id="inputAirBag"
-                                        v-model="search.airBag">
+                                        v-model="search.air_bag">
                                     <label 
                                     class="form-check-label" 
                                     for="flexCheckChecked">Air-Bag</label>
                                 </div>
-                            </div>
+                            </div> -->
                         </div>
                     </template>
                         
@@ -78,7 +78,7 @@
                         <button 
                             type="submit" 
                             class="btn btn-primary btn-sm float-right" 
-                            @click="getBrands()"> Pesquisar </button>
+                            @click="searchItens()"> Pesquisar </button>
                     </template>
                 </card-component>
                 <!-- /Search card -->
@@ -86,9 +86,9 @@
 
                 <!-- List card -->
                 <card-component title="Relação de modelos">
-                    <!-- <template v-slot:content>
+                    <template v-slot:content>
                         <table-component 
-                            :data="brands.data" 
+                            :data="models" 
                             :visualize="{ show: true, dataToggle: 'modal', dataTarget:'#showBrandModal'}"
                             :edit="{ show: true, dataToggle: 'modal', dataTarget:'#editBrandModal'}"
                             :destroy="{ show: true, dataToggle: 'modal', dataTarget:'#destroyBrandModal'}"
@@ -97,10 +97,11 @@
                                 name:{ title: 'Nome', type: 'text' }, 
                                 image:{ title: 'Logo', type: 'image' },
                                 created_at:{ title: 'Data de criação', type: 'date' },
+                                brand: {title:'Marca', type: 'text'}
                             }"
                         >
                         </table-component>
-                    </template> -->
+                    </template>
                     <template v-slot:footer>
                         <div class="row">
                             <!-- <div class="col-10">
@@ -188,7 +189,7 @@
                         <div class="form-group col">
                                 <input-container-component 
                                     id="inputSeaters" 
-                                    title="Nº de portas" 
+                                    title="Nº de lugares" 
                                     id-help="seaters"
                                     helpText="">
                                     <input 
@@ -213,7 +214,6 @@
                                     <label 
                                         class="form-check-label" 
                                         for="flexCheckDefault">ABS</label>
-                                        {{newModel.abs}}
                                 </div>
                                 <div class="form-check">
                                     <input 
@@ -224,7 +224,6 @@
                                     <label 
                                     class="form-check-label" 
                                     for="flexCheckChecked">Air-Bag</label>
-                                    {{newModel.air_bag}}
                                 </div>
                             </div>
 
@@ -252,8 +251,7 @@
                         <button 
                             type="button" 
                             class="btn btn-secondary" 
-                            data-dismiss="modal"
-                            @click="clearValues()"> Fechar </button>
+                            data-dismiss="modal"> Fechar </button>
                         <button 
                             type="button" 
                             class="btn btn-primary" 
@@ -276,6 +274,7 @@
                 baseUrl: 'http://localhost:8000/api/v1/modelo',
                 pageUrl: '',
                 filterUrl: '',
+                models:{ data: [] },
                 brands:{ data: [] },
                 newModel: {
                     id: '', 
@@ -284,30 +283,61 @@
                     image: [], 
                     door_qt: '', 
                     seaters: '', 
-                    air_bag: false, 
-                    abs: false
+                    air_bag: 0, 
+                    abs: 0
                 },
-                search: {id: '', brand_id: '', name: '', airBag: '', abs: ''}
+                search: {id: '', brand_id: '', name: ''}
             }
         },
         methods: {
             getBrands() {
-                let url = 'http://localhost:8000/api/v1/brand-all'
+                    let url = 'http://localhost:8000/api/v1/brand-all'
 
-                axios.get(url)
-                    .then(response => {
-                        this.brands = response.data
-                        console.log(this.brands)
-                    })
-                    .catch(errors => { console.log(errors) })
+                    axios.get(url)
+                        .then(response => {
+                            this.brands = response.data
+                        })
+                        .catch(errors => { console.log(errors) })
+            },
+            loadItens() {
+                    let url = this.baseUrl + '?' + this.pageUrl + this.filterUrl
+                    
+                    axios.get(url)
+                        .then(response => {
+                            this.models = response.data
+                        })
+                        .catch(errors => { console.log(errors) })
             },
             loadImage(e) {
-                this.newModel.image = e.target.files
-                console.log('IMAGE: ', this.newModel.image)
-                console.log('NEW: ', this.newModel)
+                try{
+                    this.newModel.image = e.target.files
+                } catch (errors) {
+                    console.log(errors)
+                }
+            },
+            searchItens() {
+                let filter = ''
+                for(let key in this.search) {
+                    if(this.search[key]) {
+                        if(filter != '') {
+                            filter += ';'
+                        }
+                        filter += key + ':like:' + this.search[key]
+                    }
+                }
+
+                if(filter != '') {
+                    this.pageUrl = 1
+                    this.filterUrl = '&filter=' + filter
+                } else {
+                    this.filterUrl = ''
+                }
+
+                this.loadItens()
             },
             save() {
-                console.log(this.newModel)
+                this.getCheckbox()
+
                 let formData = new FormData()
                 formData.append('name', this.newModel.name)
                 formData.append('brand_id', this.newModel.brand_id)
@@ -319,11 +349,9 @@
 
                 let config = {
                     headers: {
-                        'Content-Type': 'multipart/form-data',
+                        'Content-Type': 'multipart/form-data'
                     }
                 }
-
-                console.log('FORMDATA: ', formData)
 
                 axios.post(this.baseUrl, formData, config)
                     .then(response => {
@@ -344,11 +372,17 @@
                         // }
                         console.log(errors)
                     })
-            }
+            },
+            getCheckbox() {
+                this.newModel.air_bag == false ? this.newModel.air_bag = 0 : this.newModel.air_bag = 1
+                this.newModel.abs == false ? this.newModel.abs = 0 : this.newModel.abs = 1
+                return
+            },
 
         },
         mounted() {
             this.getBrands()
+            this.loadItens()
         }
     }
 </script>

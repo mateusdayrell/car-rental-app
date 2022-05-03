@@ -16,7 +16,7 @@ class ModeloController extends Controller
     
     public function index(Request $request)
     {
-        $modelos = array();
+        // $modelos = array();
 
         $modeloRepository = new ModeloRepository($this->modelo);
         
@@ -24,8 +24,8 @@ class ModeloController extends Controller
             $brand_atributos = 'brand:id,'.$request->brand_atributos;
             $modeloRepository->getSelectedAttributes($brand_atributos);
         } else {
-            $modelos = $this->modelo->with('brand');
-            $modeloRepository->getSelectedAttributes('brands');
+            // $modelos = $this->modelo->with('brand');
+            $modeloRepository->getSelectedAttributes('brand');
         }
 
         if($request->has('filter')) {
@@ -44,20 +44,20 @@ class ModeloController extends Controller
     {
         $request->validate($this->modelo->rules(), $this->modelo->feedback());
 
-        // ** GETTING IMAGE FILE
-        $image = $request->image;
+        $image = $request->file('image');
         $image_urn = $image->store('images/modelos', 'public');
-        
+
         $modelo = $this->modelo->create([
-            'brand_id' => $request->brand_id,
             'name' => $request->name,
             'image' => $image_urn,
+            'brand_id' => $request->brand_id,
             'door_qt' => $request->door_qt,
             'seaters' => $request->seaters,
             'air_bag' => $request->air_bag,
             'abs' => $request->abs,
         ]);
-        return response()->json($modelo, 200);
+
+        return response()->json($modelo, 201);
     }
 
     

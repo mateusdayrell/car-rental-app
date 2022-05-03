@@ -390,7 +390,7 @@
                             message: 'ID do registro: ' + response.data.id
                         }
                         console.log('Mensagem',this.responseMessage)
-                        // this.loadItens()
+                        this.loadItens()
                     })
                     .catch(errors => {
                         this.responseStatus = 'error'
