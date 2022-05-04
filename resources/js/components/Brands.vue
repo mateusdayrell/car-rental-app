@@ -297,7 +297,6 @@
                                 @change="loadImage($event)">
                     </input-container-component>
                 </div>
-                {{ $store.state.item }}
             </template>
 
             <template v-slot:footer>
@@ -399,7 +398,6 @@
                             message: errors.response.data.message,
                             content: errors.response.data.erros
                         }
-                        console.log(errors)
                     })
             },
             update() {
