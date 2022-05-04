@@ -36,7 +36,7 @@ class ModeloController extends Controller
             $modeloRepository->selectAttributes($request->atributos);
         }   
         
-        return response()->json($modeloRepository->getResult(), 200);
+        return response()->json($modeloRepository->getPaginatedResult(10), 200);
     }
 
     

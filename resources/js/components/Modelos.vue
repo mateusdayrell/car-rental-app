@@ -4,7 +4,7 @@
         <div class="row justify-content-center">
             <div class="col-md-8">
                 <!-- Search card -->
-                <card-component title="Busca de modelos">
+                <card-component title="Modelos">
                     <template v-slot:content>
                         <div class="form-row">
                             <div class="col mb-3">
@@ -45,7 +45,7 @@
                                         aria-describedby="brandHelp"
                                         v-model="search.brand_id">
                                             <option value="" disabled selected>Selecione uma marca</option>
-                                            <option v-for="b, key in brandList" :key="key" :value="b.id" > {{b.id}} - {{ b.name }}</option>
+                                            <option v-for="b, key in brandList" :key="key" :value="b.id" >{{ b.name }}</option>
                                     </select>
                                 </div>
                             </div>
@@ -75,11 +75,11 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr v-for="model, key in models" :key="key">
+                            <tr v-for="model, key in models.data" :key="key">
                                 <td>{{model.id}}</td>
                                 <td>{{model.name}}</td>
                                 <td>
-                                    <img :src="'/storage/'+model.image" width="30" height="30">
+                                    <img :src="'/storage/'+model.image" width="60" height="40">
                                 </td>
                                 <td>{{model.brand.name}}</td>
                                 <td>
@@ -110,7 +110,7 @@
                                 <paginate-component>
                                     <li 
                                         :class="link.active ? 'page-item active' : 'page-item'" 
-                                        v-for="link, key in brandList.links" 
+                                        v-for="link, key in models.links" 
                                         :key="key" 
                                         @click="paginate(link)">
                                             <a class="page-link" v-html="link.label"></a>
@@ -716,6 +716,12 @@
                         this.$store.state.transaction.status = 'error'
                         this.$store.state.transaction.message = errors.response.data.erro
                     })
+            },
+            paginate(link) {
+                if(link.url) {
+                    this.pageUrl = link.url.split('?')[1]
+                    this.loadItens()
+                }
             },
             getCheckbox(func) {
                 if(func == 'save') {
