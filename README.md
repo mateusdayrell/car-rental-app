@@ -5,7 +5,7 @@
 # Car-rental-app
 
 Apliction where you can manage your car rental company or rent a car, inspired on [Jorge Sant Ana](https://jorgesantana.net.br/) project, developed to pratice Laravel and Vue.<br>
-Tecnologies used: [Laravel](https://laravel.com/), [VueJs](https://vuejs.org/) and [Bootstrap](https://getbootstrap.com/)
+Technologies used: [Laravel](https://laravel.com/), [VueJs](https://vuejs.org/) and [Bootstrap](https://getbootstrap.com/)
 
 ## Project setup <br>
 
