@@ -11,7 +11,7 @@ Technologies used: [Laravel](https://laravel.com/), [VueJs](https://vuejs.org/) 
 
 ### Clone repository
 ```
-https://github.com/mateusdayrell/car-rental-app.git
+git clone https://github.com/mateusdayrell/car-rental-app.git
 ```
 
 ### Access the project folder
